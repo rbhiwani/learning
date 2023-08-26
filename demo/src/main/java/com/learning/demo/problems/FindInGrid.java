@@ -1,61 +1,77 @@
 package com.learning.demo.problems;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FindInGrid {
     
-    List<int[]> search(char[][] grid, String target){
+    static List<String> search(char[][] grid, String target){
         char[] arr = target.toCharArray();
         int k = arr.length;
         int m = grid.length;
         int n = grid[0].length;
-        List<int[]> list = new ArrayList<>();
-        int[][] dp = new int[m+1][n+1];
-        int count = 0;
-        for(int i=0; i<=m; i++){
-            for(int j=0; j<=n; j++){
-                char ch = grid[i][j];
+        Map<String, List<String>> map = new HashMap<>();
+        for(int i=0; i<m; i++){
+            for(int j=0; j<n; j++){
+                //char ch = grid[i][j];
+
                 if(i==0 && j==0){
                     if(arr[0] == grid[i][j]){
-                        dp[i][j] = 1;
+                        //dp[i][j] = 1;
+                        map.put(i+":"+j, Arrays.asList(i+":"+j));
+                    }else{
+                      map.put(i+":"+j, Collections.emptyList());
                     }
                 }else if(i==0){
                     // no up
-                    int prev = dp[i][j-1];
-                    if(arr[prev] == grid[i][j]){
-                        dp[i][j] = prev + 1;
+                    List<String> prev = map.get(i+":"+(j-1)) != null ? map.get(i+":"+(j-1)) : Collections.emptyList();//dp[i][j-1];
+                    List<String> current = new ArrayList<>(prev);
+                    if(arr[prev.size()] == grid[i][j]){
+                      current.add(i+":"+j);
+                      map.put(i+":"+j, current);  
+                      //dp[i][j] = prev + 1;
+                      if(current.size() == k){
+                        return current;
+                      }
+                    }else{
+                      map.put(i+":"+j, Collections.emptyList());
                     }
                 }else if(j==0){
                     // no left
-                    int prev = dp[i-1][j];
-                    if(arr[prev] == grid[i][j]){
-                        dp[i][j] = prev + 1;
+                    List<String> prev = map.get((i-1)+":"+j) != null ? map.get((i-1)+":"+j) : Collections.emptyList();//dp[i-1][j];
+                    List<String> current = new ArrayList<>(prev);
+                    if(arr[prev.size()] == grid[i][j]){
+                      current.add(i+":"+j);
+                      map.put(i+":"+j, current);
+                      //dp[i][j] = prev + 1;
+                      if(current.size() == k){
+                        return current;
+                      }
+                    }else{
+                      map.put(i+":"+j, Collections.emptyList());
                     }
                 }else{
-                    int prev = Math.max(dp[i-1][j] , dp[i][j-1]);
-                    if(arr[prev] == grid[i][j]){
-                        dp[i][j] = prev + 1;
+                    List<String> left = map.get(i+":"+(j-1)) != null ? map.get(i+":"+(j-1)) : Collections.emptyList();
+                    List<String> prev = map.get((i-1)+":"+j) != null ? map.get((i-1)+":"+j) : Collections.emptyList();
+                    if(left.size() > prev.size()){
+                      prev = left;
                     }
-                }
-
-
-                if(ch == arr[count] && (i==0 || j ==0)){
-                    dp[i][j] = 1;
-                    list.add(new int[]{i,j});
-                    count++;
-                }else if(dp[i-1][j] + dp[i][j-1] > 0 && grid[i][j] == arr[count]){
-                    dp[i][j] = (dp[i-1][j] + dp[i][j-1]) + 1;
-                    list.add(new int[]{i,j});
-                    count++;
-                }else{
-                    count = 0;
-                    list.clear();
-                }
-
-                if(count == k-1){
-                    return list;
+                    //int prev = Math.max(dp[i-1][j] , dp[i][j-1]);
+                    List<String> current = new ArrayList<>(prev);
+                    if(arr[prev.size()] == grid[i][j]){
+                      current.add(i+":"+j);
+                      map.put(i+":"+j, current);
+                      //dp[i][j] = prev + 1;
+                      if(current.size() == k){
+                        return current;
+                      }
+                    }else{
+                      map.put(i+":"+j, Collections.emptyList());
+                    }
                 }
             }
         }
@@ -63,6 +79,15 @@ public class FindInGrid {
     }
 
     public static void main(String[] args) {
+        char[][] grid1 = new char[][]{
+          {'b', 'b', 'b', 'a', 'l', 'l', 'o', 'o'},
+          {'b', 'a', 'c', 'c', 'e', 's', 'c', 'n'},
+          {'a', 'l', 't', 'e', 'w', 'c', 'e', 'w'},
+          {'a', 'l', 'o', 's', 's', 'e', 'c', 'c'},
+          {'w', 'o', 'o', 'w', 'a', 'c', 'a', 'w'},
+          {'i', 'b', 'w', 'o', 'w', 'w', 'o', 'w'}
+        };
+        System.out.println(search(grid1, "xyz"));
         
     }
 }
