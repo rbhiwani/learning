@@ -1,11 +1,8 @@
 package com.learning.demo.problems;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class FindInGrid {
     
@@ -14,12 +11,40 @@ public class FindInGrid {
         int k = arr.length;
         int m = grid.length;
         int n = grid[0].length;
-        Map<String, List<String>> map = new HashMap<>();
-        for(int i=0; i<m; i++){
-            for(int j=0; j<n; j++){
-                //char ch = grid[i][j];
+        //Map<String, List<String>> map = new HashMap<>();
+        List<String>[][] list = new List[m+1][n+1];
+        for(int i=0; i<=m; i++){
+            for(int j=0; j<=n; j++){
+                
+                if(i == 0 || j ==0){
+                  list[i][j] = new ArrayList<String>();
+                }else{
+                  char ch = grid[i-1][j-1];
+                  List<String> up = list[i-1][j];
+                  List<String> left = list[i][j-1];
+                  List<String> curreList = new ArrayList<>();
+                  if(left.size() > curreList.size()){
+                    curreList = new ArrayList<>(left);
+                  }else{
+                    curreList = new ArrayList<>(up);
+                  }
 
-                if(i==0 && j==0){
+                  if(arr[curreList.size()] == ch){
+                    curreList.add((i-1)+":"+(j-1));
+                    list[i][j] = curreList;
+                  }else{
+                    list[i][j] = new ArrayList<String>();
+                  }
+
+                  if(curreList.size() == k){
+                    return curreList;
+                  }
+
+                }
+                
+
+
+                /**if(i==0 && j==0){
                     if(arr[0] == grid[i][j]){
                         //dp[i][j] = 1;
                         map.put(i+":"+j, Arrays.asList(i+":"+j));
@@ -72,7 +97,7 @@ public class FindInGrid {
                     }else{
                       map.put(i+":"+j, Collections.emptyList());
                     }
-                }
+                }*/
             }
         }
         return Collections.emptyList();
@@ -87,7 +112,10 @@ public class FindInGrid {
           {'w', 'o', 'o', 'w', 'a', 'c', 'a', 'w'},
           {'i', 'b', 'w', 'o', 'w', 'w', 'o', 'w'}
         };
-        System.out.println(search(grid1, "xyz"));
+        System.out.println(search(grid1, "access"));
+
+        char[][] grid2 = new char[][]{{'a'}};
+        System.out.println(search(grid2, "a"));
         
     }
 }
